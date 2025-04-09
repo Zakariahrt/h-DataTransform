@@ -7,4 +7,6 @@ import seaborn as sns
 def affich():
    print('is working')
 
-
+def  load_csv(patth,delimiter=',', encoding='utf-8'):
+    df = pd.read_csv(patth,delimiter=delimiter, encoding=encoding)
+    return df
