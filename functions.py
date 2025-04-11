@@ -45,3 +45,28 @@ def clean_dates(df, date_columns):
             df[column] = pd.to_datetime(df[column], format=date_format, errors='coerce')
     
     return df
+def  replace_missing_value(df,column,value):
+  df[column].fillna(value,inplace=True)
+  return df
+
+def  drop_column(df,column):
+  df.drop(column,axis=1,inplace=True)
+  return df
+
+def save_csv(df,path):
+  df.to_csv(path,index=False)
+
+def display_info(df):
+    """Display basic information about the DataFrame."""
+    print("DataFrame Info:")
+    print(df.info())
+
+def display_head(df):
+    """Display the first few rows of the DataFrame."""
+    print("DataFrame Head:")
+    print(df.head())
+
+def display_description(df):
+    """Display summary statistics of the DataFrame."""
+    print("DataFrame Description:")
+    print(df.describe())
