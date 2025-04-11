@@ -21,4 +21,6 @@ def handle_duplicates(df, duplicates_file_path):
     else:
         print("No duplicate rows found.")
     
-    return df_cleaned    
+    return df_cleaned
+
+    
