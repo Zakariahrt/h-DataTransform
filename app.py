@@ -3,12 +3,12 @@ import pandas as pd
 import os
  
 # Define the directory where your CSV files are located
-data_dir = 'C:/Users/User/Desktop/Data Analytics Project/Dataset/work_flow/'
+data_dir = 'C:/Users/hp/hospital-data-cleaning'
 # Update this with the correct path
  
 def load_data(data_dir):
-    encounters = pd.read_csv(os.path.join(data_dir, 'clean_encounter.csv'))
-    patients = pd.read_csv(os.path.join(data_dir, 'clean_patients.csv'))
+    encounters = pd.read_csv(os.path.join(data_dir, 'R clean_encounter.csv'))
+    patients = pd.read_csv(os.path.join(data_dir, 'R clean_patients.csv'))
     organizations = pd.read_csv(os.path.join(data_dir, 'organizations.csv'))
     payers = pd.read_csv(os.path.join(data_dir, 'payers.csv'))
     procedures = pd.read_csv(os.path.join(data_dir, 'procedures.csv'))
@@ -53,7 +53,10 @@ if patient_id:
         st.write("Medications are not included in the provided data.")
        
         st.subheader("Hospital Stay Duration (hours)")
-        stay_duration = (pd.to_datetime(patient_data['STOP']) - pd.to_datetime(patient_data['START'])).dt.total_seconds() / 3600
+        patient_data['START'] = patient_data['START'].str.replace('|', '-', regex=False)
+        patient_data['STOP'] = patient_data['STOP'].str.replace('|', '-', regex=False)
+
+        stay_duration = (pd.to_datetime(patient_data['STOP']) - pd.to_datetime(patient_data['START'])).dt.total_seconds() / 3600       
         st.write(stay_duration.values)
        
         st.subheader("Visit Cost")
@@ -89,22 +92,3 @@ if patient_name:
     else:
         st.warning("No patient found with the given name.")
  
-# Calculate and display average statistics
-st.sidebar.header("Statistics")
- 
-if st.sidebar.button("Show Statistics"):
-    st.subheader("Average Hospital Stay Duration (hours)")
-    avg_stay = (pd.to_datetime(encounters['STOP']) - pd.to_datetime(encounters['START'])).dt.total_seconds().mean() / 3600
-    st.write(f"{avg_stay:.2f} hours")
-   
-    st.subheader("Average Cost per Visit")
-    try:
-        avg_cost = pd.to_numeric(encounters['TOTAL_CLAIM_COST']).mean()
-        st.write(f"${avg_cost:.2f}")
-    except ValueError as e:
-        st.warning(f"Error calculating average cost per visit: {e}")
-   
-    st.subheader("Number of Procedures Covered by Insurance")
-    covered_encounters = encounters[encounters['PAYER'] != "b1c428d6-4f07-31e0-90f0-68ffa6ff8c76"]
-    num_covered = procedures[procedures['ENCOUNTER'].isin(covered_encounters['Id'])].shape[0]
-    st.write(num_covered)
