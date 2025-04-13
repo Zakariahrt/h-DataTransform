@@ -92,3 +92,22 @@ if patient_name:
     else:
         st.warning("No patient found with the given name.")
  
+# Calculate and display average statistics
+st.sidebar.header("Statistics")
+ 
+if st.sidebar.button("Show Statistics"):
+    st.subheader("Average Hospital Stay Duration (hours)")
+    avg_stay = (pd.to_datetime(encounters['STOP']) - pd.to_datetime(encounters['START'])).dt.total_seconds().mean() / 3600
+    st.write(f"{avg_stay:.2f} hours")
+   
+    st.subheader("Average Cost per Visit")
+    try:
+        avg_cost = pd.to_numeric(encounters['TOTAL_CLAIM_COST']).mean()
+        st.write(f"${avg_cost:.2f}")
+    except ValueError as e:
+        st.warning(f"Error calculating average cost per visit: {e}")
+   
+    st.subheader("Number of Procedures Covered by Insurance")
+    covered_encounters = encounters[encounters['PAYER'] != "b1c428d6-4f07-31e0-90f0-68ffa6ff8c76"]
+    num_covered = procedures[procedures['ENCOUNTER'].isin(covered_encounters['Id'])].shape[0]
+    st.write(num_covered)
